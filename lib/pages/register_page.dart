@@ -1,4 +1,4 @@
-import 'package:chat_app/pages/chat_page.dart';
+import 'package:chat_app/pages/login_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
@@ -15,6 +15,7 @@ class RegisterPage extends StatefulWidget {
 
 class _RegisterPageState extends State<RegisterPage> {
   GlobalKey<FormState> formKey = GlobalKey();
+  final TextEditingController _pass = TextEditingController();
 
   String? email, password;
   bool isLoading = false;
@@ -64,15 +65,24 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 10,
                   ),
                   CustomFormField(
-                    hintText: 'Name',
-                    onChanged: (value) {
-                      // email = value;
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'field is empity';
+                      }
+                      return null;
                     },
+                    hintText: 'Name',
                   ),
                   const SizedBox(
                     height: 10,
                   ),
                   CustomFormField(
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'field is empity';
+                      }
+                      return null;
+                    },
                     hintText: 'Email',
                     onChanged: (value) {
                       email = value;
@@ -82,6 +92,15 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 10,
                   ),
                   CustomFormField(
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'field is empity';
+                      } else if (value.length < 8) {
+                        return "Password must be atleast 8 characters long";
+                      }
+                      return null;
+                    },
+                    controller: _pass,
                     onChanged: (value) {
                       password = value;
                     },
@@ -92,8 +111,15 @@ class _RegisterPageState extends State<RegisterPage> {
                   ),
                   CustomFormField(
                     hintText: 'Confirm Password',
-                    onChanged: (value) {
-                      email = value;
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'field is empity';
+                      } else if (value != _pass.text) {
+                        return 'password not matched';
+                      } else if (value.length < 8) {
+                        return "Password must be atleast 8 characters long";
+                      }
+                      return null;
                     },
                   ),
                   const SizedBox(
@@ -108,7 +134,9 @@ class _RegisterPageState extends State<RegisterPage> {
                         });
                         try {
                           await registerUser();
-                          Navigator.pushNamed(context, ChatPage.id);
+                          FirebaseAuth.instance.currentUser!
+                              .sendEmailVerification();
+                          Navigator.pushNamed(context, LoginPage.id);
                         } on FirebaseAuthException catch (e) {
                           if (e.code == 'weak-password') {
                             showSnackBar('The password provided is too weak.');

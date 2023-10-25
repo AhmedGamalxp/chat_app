@@ -4,26 +4,24 @@ class CustomFormField extends StatelessWidget {
   const CustomFormField(
       {super.key,
       required this.hintText,
-      required this.onChanged,
+      this.onChanged,
       this.obscureText = false,
       this.suffixIcon,
-      this.validator});
+      this.validator,
+      this.controller});
   final Widget? suffixIcon;
   final String hintText;
-  final Function(String) onChanged;
+  final Function(String)? onChanged;
   final String? Function(String?)? validator;
   final bool obscureText;
+  final TextEditingController? controller;
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      controller: controller,
       obscureText: obscureText,
-      validator: (value) {
-        if (value!.isEmpty) {
-          return 'field is empty';
-        }
-        return null;
-      },
+      validator: validator,
       onChanged: onChanged,
       style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(

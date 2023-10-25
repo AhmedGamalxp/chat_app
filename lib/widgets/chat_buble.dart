@@ -33,12 +33,13 @@ class ChatBuble extends StatelessWidget {
               child: Text(
                 massage.massage,
                 style: const TextStyle(
-                  color: Colors.white,
-                ),
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500),
               ),
             ),
             Padding(
-              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 5),
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10),
               child: Text(
                 DateFormat.Hm().format(massage.sentAt.toDate()).toString(),
                 style: TextStyle(color: Colors.white.withOpacity(0.5)),
@@ -68,14 +69,29 @@ class ChatBubleForFriend extends StatelessWidget {
               bottomLeft: Radius.circular(15),
             ),
             color: Color(0xff006D84)),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Text(
-            massage.massage,
-            style: const TextStyle(
-              color: Colors.white,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(
+                  left: 16, right: 16, bottom: 5, top: 10),
+              child: Text(
+                massage.massage,
+                style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500),
+              ),
             ),
-          ),
+            Padding(
+              padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10),
+              child: Text(
+                DateFormat.Hm().format(massage.sentAt.toDate()).toString(),
+                style: TextStyle(color: Colors.white.withOpacity(0.5)),
+                textAlign: TextAlign.left,
+              ),
+            ),
+          ],
         ),
       ),
     );
