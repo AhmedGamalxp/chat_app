@@ -1,5 +1,7 @@
 import 'package:chat_app/pages/chat_page.dart';
 import 'package:chat_app/pages/register_page.dart';
+import 'package:chat_app/pages/sending_photo.dart';
+import 'package:chat_app/widgets/show_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -23,6 +25,8 @@ class ChatApp extends StatelessWidget {
         LoginPage.id: (context) => const LoginPage(),
         RegisterPage.id: (context) => const RegisterPage(),
         ChatPage.id: (context) => ChatPage(),
+        SendingPhoto.id: (context) => SendingPhoto(),
+        ShowPhoto.id: (context) => ShowPhoto(),
       },
       debugShowCheckedModeBanner: false,
       initialRoute: 'LoginPage',
