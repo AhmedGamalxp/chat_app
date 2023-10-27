@@ -1,5 +1,9 @@
 import 'dart:io';
 
+import 'package:chat_app/pages/login_page.dart';
+import 'package:flutter/foundation.dart';
+import 'package:record/record.dart';
+
 import 'package:chat_app/models/massages_model.dart';
 import 'package:chat_app/pages/sending_photo.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -11,6 +15,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import '../widgets/chat_buble.dart';
+import 'package:just_audio/just_audio.dart' as jsAudio;
 
 class ChatPage extends StatefulWidget {
   static String id = 'ChatPage';
@@ -22,19 +27,22 @@ class ChatPage extends StatefulWidget {
 }
 
 class _ChatPageState extends State<ChatPage> {
+  Record audioRecord = Record();
+  bool isRecording = false;
   final listController = ScrollController();
-
   final TextEditingController controller = TextEditingController();
-
   final CollectionReference massages =
       FirebaseFirestore.instance.collection(kMassagesCollectionReference);
   bool isLoading = false;
-
   String? url;
+  @override
+  void initState() {
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     File file;
-
     return StreamBuilder<QuerySnapshot>(
         stream: massages.orderBy(kSentAt, descending: true).snapshots(),
         builder: (context, snapshot) {
@@ -65,6 +73,17 @@ class _ChatPageState extends State<ChatPage> {
                     )
                   ],
                 ),
+                actions: [
+                  IconButton(
+                    onPressed: () {
+                      FirebaseAuth.instance.signOut();
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, LoginPage.id, (route) => false);
+                    },
+                    icon: const Icon(Icons.exit_to_app_outlined),
+                    color: Colors.white,
+                  )
+                ],
               ),
               body: Column(
                 children: [
@@ -108,11 +127,12 @@ class _ChatPageState extends State<ChatPage> {
                             isLoading = false;
                           });
                         },
-                        child: const Padding(
-                          padding: EdgeInsets.only(left: 8),
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8),
                           child: Icon(
                             Icons.photo,
                             size: 30,
+                            color: kPrimerColor,
                           ),
                         ),
                       ),
@@ -133,6 +153,55 @@ class _ChatPageState extends State<ChatPage> {
                               listController.jumpTo(0);
                             },
                             decoration: InputDecoration(
+                              prefixIcon: GestureDetector(
+                                onLongPress: () async {
+                                  // Check and request permission if needed
+                                  try {
+                                    if (await audioRecord.hasPermission()) {
+                                      await jsAudio.AudioPlayer().setAsset(
+                                          'assets/audio/Notification.mp3');
+
+                                      // Start recording to file
+                                      await audioRecord.start();
+                                      setState(() {
+                                        isRecording = true;
+                                      });
+                                    }
+                                  } catch (e) {
+                                    print(e);
+                                  }
+                                },
+                                onLongPressEnd: (_) async {
+                                  final path = await audioRecord.stop();
+                                  setState(() {
+                                    isRecording = false;
+                                  });
+                                  if (path != null) {
+                                    file = File(path);
+                                    var imagename = basename(path);
+                                    var refStorage =
+                                        FirebaseStorage.instance.ref(imagename);
+                                    await refStorage.putFile(file);
+                                    url = await refStorage.getDownloadURL();
+                                    if (url != null) {
+                                      massages.add({
+                                        kMassage: url,
+                                        kSentAt: DateTime.now(),
+                                        'id': FirebaseAuth
+                                            .instance.currentUser!.uid,
+                                        'type': 3
+                                      });
+                                    } else {
+                                      debugPrint('--------------------url is null');
+                                    }
+                                  }
+                                },
+                                child: Icon(
+                                  Icons.mic,
+                                  color: kPrimerColor,
+                                  size: isRecording ? 35 : 25,
+                                ),
+                              ),
                               suffixIcon: IconButton(
                                   onPressed: () {
                                     massages.add({

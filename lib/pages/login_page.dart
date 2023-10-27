@@ -126,8 +126,11 @@ class _LoginPageState extends State<LoginPage> {
                         try {
                           await loginUser();
                           FirebaseAuth.instance.currentUser!.emailVerified
-                              ? Navigator.pushNamed(context, ChatPage.id,
-                                  arguments: email)
+                              ? Navigator.pushNamedAndRemoveUntil(
+                                  context,
+                                  ChatPage.id,
+                                  arguments: email,
+                                  (route) => false)
                               : showSnackBar('please verify your email');
                         } on FirebaseAuthException catch (e) {
                           if (e.code == 'user-not-found') {
