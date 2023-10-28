@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import '../widgets/custom_button.dart';
 import '../widgets/custom_formfield.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 class LoginPage extends StatefulWidget {
   static String id = 'LoginPage';
@@ -117,7 +118,7 @@ class _LoginPageState extends State<LoginPage> {
                     height: 20,
                   ),
                   CustomBotton(
-                    text: 'LOGIN',
+                    text: const Text('LOGIN'),
                     ontap: () async {
                       if (formKey.currentState!.validate()) {
                         setState(() {
@@ -140,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                                 'Wrong password provided for that user.');
                           }
                         } catch (e) {
-                          print(e);
+                          debugPrint(e.toString());
                           showSnackBar('there was an error');
                         }
 
@@ -150,6 +151,27 @@ class _LoginPageState extends State<LoginPage> {
                       }
                     },
                   ),
+                  const SizedBox(
+                    height: 10,
+                  ),
+                  CustomBotton(
+                      text: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text('Sign in with google '),
+                          Image.asset(
+                            'assets/images/google.png',
+                            width: 35,
+                          ),
+                        ],
+                      ),
+                      ontap: () async {
+                        try {
+                          await signInWithGoogle();
+                        } catch (e) {
+                          debugPrint(e.toString());
+                        }
+                      }),
                   const SizedBox(
                     height: 10,
                   ),
@@ -192,5 +214,23 @@ class _LoginPageState extends State<LoginPage> {
   Future<void> loginUser() async {
     await FirebaseAuth.instance
         .signInWithEmailAndPassword(email: email!, password: password!);
+  }
+
+  Future<UserCredential> signInWithGoogle() async {
+    // Trigger the authentication flow
+    final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+
+    // Obtain the auth details from the request
+    final GoogleSignInAuthentication? googleAuth =
+        await googleUser?.authentication;
+
+    // Create a new credential
+    final credential = GoogleAuthProvider.credential(
+      accessToken: googleAuth?.accessToken,
+      idToken: googleAuth?.idToken,
+    );
+
+    // Once signed in, return the UserCredential
+    return await FirebaseAuth.instance.signInWithCredential(credential);
   }
 }

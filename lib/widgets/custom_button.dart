@@ -6,7 +6,7 @@ class CustomBotton extends StatelessWidget {
     required this.text,
     required this.ontap,
   });
-  final String text;
+  final Widget text;
   final VoidCallback ontap;
 
   @override
@@ -21,7 +21,7 @@ class CustomBotton extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
         child: Center(
-          child: Text(text),
+          child: text,
         ),
       ),
     );

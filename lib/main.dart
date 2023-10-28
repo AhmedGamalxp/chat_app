@@ -2,6 +2,7 @@ import 'package:chat_app/pages/chat_page.dart';
 import 'package:chat_app/pages/register_page.dart';
 import 'package:chat_app/pages/sending_photo.dart';
 import 'package:chat_app/widgets/show_photo.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
@@ -24,12 +25,15 @@ class ChatApp extends StatelessWidget {
       routes: {
         LoginPage.id: (context) => const LoginPage(),
         RegisterPage.id: (context) => const RegisterPage(),
-        ChatPage.id: (context) => ChatPage(),
+        ChatPage.id: (context) => const ChatPage(),
         SendingPhoto.id: (context) => SendingPhoto(),
-        ShowPhoto.id: (context) => ShowPhoto(),
+        ShowPhoto.id: (context) => const ShowPhoto(),
       },
       debugShowCheckedModeBanner: false,
-      initialRoute: 'LoginPage',
+      initialRoute: (FirebaseAuth.instance.currentUser != null &&
+              FirebaseAuth.instance.currentUser!.emailVerified)
+          ? ChatPage.id
+          : LoginPage.id,
     );
   }
 }

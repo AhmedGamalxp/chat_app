@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:assets_audio_player/assets_audio_player.dart';
 import 'package:chat_app/pages/login_page.dart';
-import 'package:flutter/foundation.dart';
 import 'package:record/record.dart';
 
 import 'package:chat_app/models/massages_model.dart';
@@ -15,7 +15,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:modal_progress_hud_nsn/modal_progress_hud_nsn.dart';
 import '../widgets/chat_buble.dart';
-import 'package:just_audio/just_audio.dart' as jsAudio;
 
 class ChatPage extends StatefulWidget {
   static String id = 'ChatPage';
@@ -158,10 +157,12 @@ class _ChatPageState extends State<ChatPage> {
                                   // Check and request permission if needed
                                   try {
                                     if (await audioRecord.hasPermission()) {
-                                      await jsAudio.AudioPlayer().setAsset(
-                                          'assets/audio/Notification.mp3');
-
-                                      // Start recording to file
+                                      AssetsAudioPlayer.newPlayer().open(
+                                        Audio("assets/audio/Notification.mp3"),
+                                        autoStart: false,
+                                        showNotification: false,
+                                      );
+                                      // Start r  ecording to file
                                       await audioRecord.start();
                                       setState(() {
                                         isRecording = true;
@@ -177,6 +178,9 @@ class _ChatPageState extends State<ChatPage> {
                                     isRecording = false;
                                   });
                                   if (path != null) {
+                                    setState(() {
+                                      isLoading = true;
+                                    });
                                     file = File(path);
                                     var imagename = basename(path);
                                     var refStorage =
@@ -191,15 +195,16 @@ class _ChatPageState extends State<ChatPage> {
                                             .instance.currentUser!.uid,
                                         'type': 3
                                       });
-                                    } else {
-                                      debugPrint('--------------------url is null');
+                                      setState(() {
+                                        isLoading = false;
+                                      });
                                     }
                                   }
                                 },
                                 child: Icon(
                                   Icons.mic,
                                   color: kPrimerColor,
-                                  size: isRecording ? 35 : 25,
+                                  size: isRecording ? 40 : 25,
                                 ),
                               ),
                               suffixIcon: IconButton(
@@ -215,7 +220,9 @@ class _ChatPageState extends State<ChatPage> {
                                     listController.jumpTo(0);
                                   },
                                   icon: Icon(Icons.send, color: kPrimerColor)),
-                              hintText: 'Send Massage',
+                              hintText: isLoading
+                                  ? 'loading.......................'
+                                  : 'Send Massage',
                               contentPadding: const EdgeInsets.all(15),
                               border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(15)),

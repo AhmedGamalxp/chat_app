@@ -126,7 +126,7 @@ class _RegisterPageState extends State<RegisterPage> {
                     height: 20,
                   ),
                   CustomBotton(
-                    text: 'REGISTER',
+                    text: const Text('REGISTER'),
                     ontap: () async {
                       if (formKey.currentState!.validate()) {
                         setState(() {

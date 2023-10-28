@@ -15,10 +15,9 @@ class ShowPhoto extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
       ),
-      body: Container(
-          child: PhotoView(
+      body: PhotoView(
         imageProvider: NetworkImage(url.toString()),
-      )),
+      ),
     );
   }
 }
