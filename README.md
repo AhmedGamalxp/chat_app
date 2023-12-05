@@ -1,16 +1,36 @@
-# chat_app
 
-A new Flutter project.
+# Chat App
 
-## Getting Started
+it's a simple chat app with a lot of features like sending photos and voice massages .
 
-This project is a starting point for a Flutter application.
+## Features
 
-A few resources to get you started if this is your first Flutter project:
+- firebase authentication
+- social media authentication
+- sending photos
+- sending voice massages
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+## Technologies
+- flutter / dart
+- firebase
+- authentication
+- social media authentication
+- api
+- http / dio
+- version controll
+- postman
+
+## Screenshots
+<img src="screen shots/ss1.png" width=300 hight=400>  <img src="screen shots/ss2.png" width=300 hight=400>   <img src="screen shots/ss3.png" width=300 hight=400>   <img src="screen shots/ss4.png" width=300 hight=400>
+
+
+
+
+
+
+
+
+
+
